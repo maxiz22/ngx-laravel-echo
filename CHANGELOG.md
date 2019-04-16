@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.4"></a>
+## 1.0.4 (2019-04-16)
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/chancezeus/angular-laravel-echo/compare/v2.1.1...v1.0.3) (2019-04-16)
 
