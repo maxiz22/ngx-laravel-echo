@@ -1,11 +1,11 @@
 {
   "name": "ngx-laravel-echo",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Angular service for Laravel Echo",
-  "main": "./bundles/angular-laravel-echo.umd.js",
-  "module": "./angular-laravel-echo.es5.js",
-  "es2015": "./angular-laravel-echo.js",
-  "typings": "./angular-laravel-echo.d.ts",
+  "main": "./bundles/ngx-laravel-echo.umd.js",
+  "module": "./ngx-laravel-echo.es5.js",
+  "es2015": "./ngx-laravel-echo.js",
+  "typings": "./ngx-laravel-echo.d.ts",
   "author": "Mark van Beek <mark@appelit.com> (https://appelit.com)",
   "license": "MIT",
   "keywords": [
