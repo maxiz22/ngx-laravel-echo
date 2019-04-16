@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/lib-es2015/",
+    "target": "es2015",
+    "rootDir": "./",
+    "baseUrl": "",
+    "types": []
+  },
+  "files": [
+    "./index.ts"
+  ],
+  "include": [
+    "./*.d.ts",
+    "./**/*.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
+    "strictMetadataEmit": true,
+    "skipTemplateCodegen": true,
+    "flatModuleOutFile": "ngx-laravel-echo.js",
+    "flatModuleId": "ngx-laravel-echo",
+    "genDir": "../../out-tsc/lib-gen-dir/"
+  }
+}
