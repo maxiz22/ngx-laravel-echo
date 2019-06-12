@@ -2,8 +2,10 @@ import * as pusher from 'pusher-js';
 import {Pusher} from 'pusher-js';
 import * as io from 'socket.io-client';
 
-export declare module Echo {
-  export interface EchoStatic {
+
+
+declare module Echo {
+  interface EchoStatic {
     /**
      * The broadcasting connector.
      */
@@ -92,7 +94,7 @@ export declare module Echo {
   }
 
 
-  export interface Config {
+  interface Config {
     /**
      * Authentication information for the underlying connector
      */
@@ -121,11 +123,11 @@ export declare module Echo {
     namespace?: string;
   }
 
-  export interface NullConfig extends Config {
+  interface NullConfig extends Config {
     broadcaster: 'null';
   }
 
-  export interface PusherConfig extends Config, pusher.Config {
+  interface PusherConfig extends Config, pusher.Config {
     broadcaster?: 'pusher';
 
     /**
@@ -142,7 +144,7 @@ export declare module Echo {
     key?: string | null;
   }
 
-  export interface SocketIoConfig extends Config, SocketIOClient.ConnectOpts {
+  interface SocketIoConfig extends Config, SocketIOClient.ConnectOpts {
     broadcaster: 'socket.io';
 
     /**
@@ -156,7 +158,7 @@ export declare module Echo {
     host: string;
   }
 
-  export interface Connector {
+  interface Connector {
     /**
      * All of the subscribed channel names.
      */
@@ -234,7 +236,7 @@ export declare module Echo {
     disconnect(): void;
   }
 
-  export interface NullConnector extends Connector {
+  interface NullConnector extends Connector {
     /**
      * Create a new class instance.
      *
@@ -278,7 +280,7 @@ export declare module Echo {
     presenceChannel(name: string): NullPresenceChannel;
   }
 
-  export interface PusherConnector extends Connector {
+  interface PusherConnector extends Connector {
     /**
      * The Pusher instance.
      */
@@ -327,7 +329,7 @@ export declare module Echo {
     presenceChannel(name: string): PusherPresenceChannel;
   }
 
-  export interface SocketIoConnector extends Connector {
+  interface SocketIoConnector extends Connector {
     /**
      * The Socket.io connection instance.
      */
@@ -383,7 +385,7 @@ export declare module Echo {
     presenceChannel(name: string): SocketIoPresenceChannel;
   }
 
-  export interface Channel {
+  interface Channel {
     /**
      * The name of the channel.
      */
@@ -426,7 +428,7 @@ export declare module Echo {
     listenForWhisper(event: string, callback: (data: any) => void): Channel;
   }
 
-  export interface PrivateChannel extends Channel {
+  interface PrivateChannel extends Channel {
     /**
      * Trigger client event on the channel.
      *
@@ -437,7 +439,7 @@ export declare module Echo {
     whisper(event: string, data: any): PrivateChannel;
   }
 
-  export interface PresenceChannel extends PrivateChannel {
+  interface PresenceChannel extends PrivateChannel {
     /**
      * Register a callback to be called anytime the member list changes.
      *
@@ -463,7 +465,7 @@ export declare module Echo {
     leaving(callback: (user: any) => void): PresenceChannel;
   }
 
-  export interface NullChannel extends Channel {
+  interface NullChannel extends Channel {
     /**
      * Subscribe to a Null channel.
      */
@@ -492,13 +494,13 @@ export declare module Echo {
     on(event: string, callback: pusher.EventCallback): Channel;
   }
 
-  export interface NullPrivateChannel extends NullChannel, PrivateChannel {
+  interface NullPrivateChannel extends NullChannel, PrivateChannel {
   }
 
-  export interface NullPresenceChannel extends NullPrivateChannel, PresenceChannel {
+  interface NullPresenceChannel extends NullPrivateChannel, PresenceChannel {
   }
 
-  export interface PusherChannel extends Channel {
+  interface PusherChannel extends Channel {
     /**
      * The pusher client instance
      */
@@ -547,13 +549,13 @@ export declare module Echo {
     on(event: string, callback: pusher.EventCallback): Channel;
   }
 
-  export interface PusherPrivateChannel extends PusherChannel, PrivateChannel {
+  interface PusherPrivateChannel extends PusherChannel, PrivateChannel {
   }
 
-  export interface PusherPresenceChannel extends PusherPrivateChannel, PresenceChannel {
+  interface PusherPresenceChannel extends PusherPrivateChannel, PresenceChannel {
   }
 
-  export interface SocketIoChannel extends Channel {
+  interface SocketIoChannel extends Channel {
 
     /**
      * The SocketIo client instance
@@ -614,13 +616,13 @@ export declare module Echo {
     unbind(): void;
   }
 
-  export interface SocketIoPrivateChannel extends SocketIoChannel, PrivateChannel {
+  interface SocketIoPrivateChannel extends SocketIoChannel, PrivateChannel {
   }
 
-  export interface SocketIoPresenceChannel extends SocketIoPrivateChannel, PresenceChannel {
+  interface SocketIoPresenceChannel extends SocketIoPrivateChannel, PresenceChannel {
   }
 
-  export interface EventFormatter {
+  interface EventFormatter {
     /**
      * Event namespace.
      */
@@ -649,4 +651,10 @@ export declare module Echo {
      */
     setNamespace(value: string | boolean): void;
   }
+}
+
+declare const Echo: Echo.EchoStatic;
+
+declare module 'laravel-echo' {
+  export default Echo;
 }

@@ -1,7 +1,7 @@
 import {Inject, Injectable, InjectionToken, NgZone} from '@angular/core';
 import {Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
 import {distinctUntilChanged, map, shareReplay, startWith} from 'rxjs/operators';
-import {Echo} from '../../laravel-echo';
+import Echo from 'laravel-echo';
 import * as io from 'socket.io-client';
 
 /**
@@ -340,7 +340,7 @@ export class EchoService {
       }, options);
     }
 
-    this._echo = {options: options} as Echo.EchoStatic;
+    this._echo = new Echo(options);
 
     this.options = this.echo.connector.options;
 
