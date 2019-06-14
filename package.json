@@ -1,6 +1,6 @@
 {
   "name": "ngx-laravel-echo",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A Angular service for Laravel Echo",
   "main": "./bundles/ngx-laravel-echo.umd.js",
   "module": "./ngx-laravel-echo.es5.js",
