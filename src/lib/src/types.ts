@@ -1,9 +1,7 @@
 export {
   ECHO_CONFIG,
-  NullEchoConfig,
-  PusherEchoConfig,
-  SocketIoEchoConfig,
   ConnectionEvents,
+  EchoConfig,
   NullConnectionEvent,
   PusherStates,
   PusherConnectionEvent,

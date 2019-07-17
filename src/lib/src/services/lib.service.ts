@@ -1,7 +1,7 @@
 import {Inject, Injectable, InjectionToken, NgZone} from '@angular/core';
 import {Observable, of, ReplaySubject, Subject, throwError} from 'rxjs';
 import {distinctUntilChanged, map, shareReplay, startWith} from 'rxjs/operators';
-import Echo from 'laravel-echo';
+import Echo from 'laravel-echo/dist/echo';
 import * as io from 'socket.io-client';
 
 /**
@@ -24,28 +24,7 @@ export interface EchoConfig {
   /**
    * Laravel Echo configuration
    */
-  options: Echo.Config;
-}
-
-export interface NullEchoConfig extends EchoConfig {
-  /**
-   * Laravel Echo configuration
-   */
-  options: Echo.NullConfig;
-}
-
-export interface PusherEchoConfig extends EchoConfig {
-  /**
-   * Laravel Echo configuration
-   */
-  options: Echo.PusherConfig;
-}
-
-export interface SocketIoEchoConfig extends EchoConfig {
-  /**
-   * Laravel Echo configuration
-   */
-  options: Echo.SocketIoConfig;
+  options: any;
 }
 
 /**
@@ -212,9 +191,9 @@ export type ConnectionEvents = NullConnectionEvent | SocketIoConnectionEvents | 
 /**
  * @hidden
  */
-interface Channel {
+interface NgxChannel {
   name: string;
-  channel: Echo.Channel;
+  channel: any;
   type: ChannelType;
   listeners: {
     [key: string]: Subject<any>;
@@ -314,13 +293,13 @@ class TypeFormatter {
  */
 @Injectable()
 export class EchoService {
-  private readonly _echo: Echo.EchoStatic;
-  private readonly options: Echo.Config;
+  private readonly _echo: Echo;
+  private readonly options: any;
   private readonly typeFormatter: TypeFormatter;
   private readonly connected$: Observable<boolean>;
   private readonly connectionState$: Observable<ConnectionEvents>;
 
-  private readonly channels: Array<Channel> = [];
+  private readonly channels: Array<NgxChannel | null> = [];
   private readonly notificationListeners: { [key: string]: Subject<any> } = {};
 
   private userChannelName: string | null = null;
@@ -352,7 +331,7 @@ export class EchoService {
         break;
       case 'socket.io':
         this.connectionState$ = new Observable<SocketIoConnectionEvents>((subscriber: any) => {
-          const socket = (<Echo.SocketIoConnector>this._echo.connector).socket;
+          const socket = this._echo.connector.socket;
 
           const handleConnect = () => this.ngZone.run(
             () => subscriber.next({type: 'connect'})
@@ -433,7 +412,7 @@ export class EchoService {
         break;
       case 'pusher':
         this.connectionState$ = new Observable<PusherConnectionEvents>((subscriber: any) => {
-          const socket = (<Echo.PusherConnector>this._echo.connector).pusher.connection;
+          const socket = this._echo.connector.pusher.connection;
 
           const handleStateChange = ({current}: { current: PusherStates }) => this.ngZone.run(
             () => subscriber.next({type: current})
@@ -475,10 +454,10 @@ export class EchoService {
     }
 
     if (this.options.broadcaster === 'pusher') {
-      return (<Echo.PusherConnector>this._echo.connector).pusher.connection.state === 'connected';
+      return this._echo.connector.pusher.connection.state === 'connected';
     }
 
-    return (<Echo.SocketIoConnector>this._echo.connector).socket.connected;
+    return this._echo.connector.socket.connected;
   }
 
   /**
@@ -498,7 +477,7 @@ export class EchoService {
   /**
    * The echo instance, can be used to implement any custom requirements outside of this service (remember to include NgZone.run calls)
    */
-  get echo(): Echo.EchoStatic {
+  get echo(): Echo {
     return this._echo;
   }
 
@@ -516,8 +495,8 @@ export class EchoService {
    * @param type The type of channel to lookup
    * @returns The channel if found or null
    */
-  private getChannelFromArray(name: string, type: ChannelType | null = null): Channel | null {
-    const channel = this.channels.find(c => c.name === name);
+  private getChannelFromArray(name: string, type: ChannelType | null = null): NgxChannel | null {
+    const channel = this.channels.find(c => c !== null && c.name === name);
     if (channel) {
       if (type && channel.type !== type) {
         throw new Error(`Channel ${name} is not a ${type} channel`);
@@ -536,7 +515,7 @@ export class EchoService {
    * @param type The type of channel to lookup
    * @returns The channel
    */
-  private requireChannelFromArray(name: string, type: ChannelType | null = null): Channel {
+  private requireChannelFromArray(name: string, type: ChannelType | null = null): NgxChannel {
     const channel = this.getChannelFromArray(name, type);
     if (!channel) {
       if (type) {
@@ -555,7 +534,7 @@ export class EchoService {
    * @param name The name of the channel to join
    * @returns The fetched or created channel
    */
-  private publicChannel(name: string): Echo.Channel {
+  private publicChannel(name: string): any {
     let channel = this.getChannelFromArray(name, 'public');
     if (channel) {
       return channel.channel;
@@ -581,10 +560,10 @@ export class EchoService {
    * @param name The name of the channel to join
    * @returns The fetched or created channel
    */
-  private presenceChannel(name: string): Echo.PresenceChannel {
+  private presenceChannel(name: string): any {
     let channel = this.getChannelFromArray(name, 'presence');
     if (channel) {
-      return channel.channel as Echo.PresenceChannel;
+      return channel.channel;
     }
 
     const echoChannel = this.echo.join(name);
@@ -654,10 +633,10 @@ export class EchoService {
    * @param name The name of the channel to join
    * @returns The fetched or created channel
    */
-  private privateChannel(name: string): Echo.PrivateChannel {
+  private privateChannel(name: string): any {
     let channel = this.getChannelFromArray(name, 'private');
     if (channel) {
-      return channel.channel as Echo.PrivateChannel;
+      return channel.channel;
     }
 
     const echoChannel = this.echo.private(name);
@@ -692,7 +671,7 @@ export class EchoService {
     this.options.auth.headers = Object.assign({}, headers);
 
     if (this.options.broadcaster === 'pusher') {
-      const connector = (<Echo.PusherConnector>this._echo.connector);
+      const connector = this._echo.connector;
 
       if (connector.pusher.config.auth !== this.options.auth) {
         connector.pusher.config.auth = this.options.auth;
@@ -725,8 +704,8 @@ export class EchoService {
    */
   logout(): EchoService {
     this.channels
-      .filter(channel => channel.type !== 'public')
-      .forEach(channel => this.leave(channel.name));
+      .filter(channel => channel !== null && channel.type !== 'public')
+      .forEach(channel => this.leave(channel !== null ? channel.name : ''));
 
     this.options.auth = this.options.auth || {};
     this.options.auth.headers = {};
@@ -936,7 +915,7 @@ export class EchoService {
       throw new Error('Whisper is not available on public channels');
     }
 
-    const echoChannel = channel.channel as Echo.PrivateChannel;
+    const echoChannel = channel.channel;
 
     echoChannel.whisper(event, data);
 
