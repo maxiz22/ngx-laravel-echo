@@ -14,14 +14,37 @@ the following chart for what version of the package to use based on your version
 
 | Angular Version | Package Version |
 |:---------------:|:---------------:|
-| \>= 6.0         | 2.*             |
-| < 6.0           | 1.*             |
+| \>= 6.0         | 1.0.25          |
 
 # Documentation
 
-Documentation for the module is available on github pages at [https://chancezeus.github.io/angular-laravel-echo/](https://chancezeus.github.io/angular-laravel-echo/)
+Add this to your app.module
+```
+import {EchoConfig, NgxLaravelEchoModule} from 'ngx-laravel-echo';
+
+export const echoConfig: EchoConfig = {
+    userModel: 'users',
+    notificationNamespace: 'App\\Notifications',
+    options: {
+        broadcaster: 'pusher',
+        key: '124',
+        wsHost: 'api.test',
+        authEndpoint: 'http://api.test/broadcasting/auth',
+        host: 'api.test',
+        wsPort: 6001,
+        disableStats: true,
+        namespace: ''
+    }
+};
+
+imports: [
+  NgxLaravelEchoModule.forRoot(echoConfig),
+]
+
+```
 
 # Contributors
 
 - [ChanceZeus](https://github.com/chancezeus): Initial author of the package
 - [Wizofgoz](https://github.com/Wizofgoz): Angular 6+ support
+- [mmschuler](https://github.com/mmschuler): Fix Angular 8 Import and Typescript transpile
