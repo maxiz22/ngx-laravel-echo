@@ -17,7 +17,7 @@ export class NgxLaravelEchoModule {
    * is only called from the root module otherwise multiple instances of the service and interceptor will be created
    * (one for each module it is called in)
    */
-  public static forRoot(config: EchoConfig): ModuleWithProviders {
+  public static forRoot(config: EchoConfig): ModuleWithProviders<any> {
     return {
       ngModule: NgxLaravelEchoModule,
       providers: [
